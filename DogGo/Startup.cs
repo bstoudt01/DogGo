@@ -50,7 +50,7 @@ namespace DogGo
             {
                 endpoints.MapControllerRoute(
                     name: "default",
-                    pattern: "{controller=Walkers}/{action=Index}/{id?}");
+                    pattern: "{controller=Home}/{action=Index}/{id?}");
             });
         }
     }
