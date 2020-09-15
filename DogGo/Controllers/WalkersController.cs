@@ -1,7 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
+﻿using System.Collections.Generic;
 using DogGo.Models;
 using DogGo.Repositories;
 using Microsoft.AspNetCore.Http;
@@ -14,15 +11,20 @@ namespace DogGo.Controllers
     {
         private readonly WalkerRepository _walkerRepo;
 
-        // The constructor accepts an IConfiguration object as a parameter. This class comes from the ASP.NET framework and is useful for retrieving things out of the appsettings.json file like connection strings.
+        // The constructor accepts an IConfiguration object as a parameter. 
+        //This class comes from the ASP.NET framework and is useful for retrieving things out of the appsettings.json file like connection strings.
         public WalkersController(IConfiguration config)
         {
             _walkerRepo = new WalkerRepository(config);
         }
 
         // GET: Walkers
+        //ActionResult is MVC thing, it created the index for us
+        //we declared we wanted to enstaniate list in this method that contains all walkers linked to the walkers table that is accessed through the walkers Repository
+       //returns a view result and passed in walkers, need to create a walkers view, and Razor does it for us
         public ActionResult Index()
         {
+
             List<Walker> walkers = _walkerRepo.GetAllWalkers();
 
             return View(walkers);

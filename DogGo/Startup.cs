@@ -51,6 +51,8 @@ namespace DogGo
                 endpoints.MapControllerRoute(
                     name: "default",
                     pattern: "{controller=Home}/{action=Index}/{id?}");
+                //the pattern above defines your starting view point and how views for methods / values are expected to be passed along
+                //or something like that
             });
         }
     }
