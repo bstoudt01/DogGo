@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using DogGo.Models;
 using DogGo.Repositories;
 using Microsoft.AspNetCore.Http;
@@ -7,102 +8,118 @@ using Microsoft.Extensions.Configuration;
 
 namespace DogGo.Controllers
 {
-    public class DogController : Controller
+    public class DogsController : Controller
     {
-        private readonly WalkerRepository _walkerRepo;
+        private readonly IDogRepository _dogRepo;
 
         // The constructor accepts an IConfiguration object as a parameter. 
         //This class comes from the ASP.NET framework and is useful for retrieving things out of the appsettings.json file like connection strings.
-        public DogController(IConfiguration config)
+        public DogsController(IDogRepository dogRepository)
         {
-            _walkerRepo = new WalkerRepository(config);
+            _dogRepo = dogRepository;
         }
 
-        // GET: Walkers
+        // GET: Dogs
         //ActionResult is MVC thing, it created the index for us
         //we declared we wanted to enstaniate list in this method that contains all walkers linked to the walkers table that is accessed through the walkers Repository
        //returns a view result and passed in walkers, need to create a walkers view, and Razor does it for us
         public ActionResult Index()
         {
 
-            List<Walker> walkers = _walkerRepo.GetAllWalkers();
+            List<Dog> dogs = _dogRepo.GetAllDogs();
 
-            return View(walkers);
+            return View(dogs);
         }
 
-        // GET: Walkers/Details/5
+
+        // GET: Dog/Details/5
         public ActionResult Details(int id)
         {
-            Walker walker = _walkerRepo.GetWalkerById(id);
+            Dog dog = _dogRepo.GetDogById(id);
 
-            if (walker == null)
+            if (dog == null)
             {
                 return NotFound();
             }
 
-            return View(walker);
+            return View();
         }
 
-        // GET: WalkersController/Create
+        // GET: DogController/Create
         public ActionResult Create()
         {
             return View();
         }
 
-        // POST: WalkersController/Create
+        // POST: DogController/Create
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public ActionResult Create(IFormCollection collection)
+        public ActionResult Create(Dog dog)
         {
             try
             {
-                return RedirectToAction(nameof(Index));
+                _dogRepo.AddDog(dog);
+
+                return RedirectToAction("Index");
             }
-            catch
+            catch (Exception ex)
             {
                 return View();
             }
         }
 
-        // GET: WalkersController/Edit/5
+        // GET: Dog/Edit/5
         public ActionResult Edit(int id)
         {
+            Dog dog = _dogRepo.GetDogById(id);
+
+            if (dog == null)
+            {
+                return NotFound();
+            }
+
             return View();
         }
 
-        // POST: WalkersController/Edit/5
+        // POST: Owners/Edit/5
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public ActionResult Edit(int id, IFormCollection collection)
+        public ActionResult Edit(int id, Dog dog)
         {
             try
             {
-                return RedirectToAction(nameof(Index));
+                _dogRepo.UpdateDog(dog);
+
+                return RedirectToAction("Index");
             }
-            catch
+            catch (Exception ex)
             {
                 return View();
             }
         }
 
-        // GET: WalkersController/Delete/5
+        // GET: Dogs/Delete/5
         public ActionResult Delete(int id)
         {
+            Dog dog = _dogRepo.GetDogById(id);
+
             return View();
         }
 
-        // POST: WalkersController/Delete/5
+        // POST: Dogs/Delete/5
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public ActionResult Delete(int id, IFormCollection collection)
+        public ActionResult Delete(int id, Dog dog)
         {
             try
             {
-                return RedirectToAction(nameof(Index));
+                _dogRepo.DeleteDog(id);
+
+                return RedirectToAction("Index");
             }
-            catch
+            catch (Exception ex)
             {
-                return View();
+                return View(dog);
             }
         }
     }

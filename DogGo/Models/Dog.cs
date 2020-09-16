@@ -14,7 +14,7 @@ namespace DogGo.Models
         //bring in foriegn key and you need to declare a property to hold the object that key represents
         public string Breed { get; set; }
         public string Notes { get; set; }
-        public string ImageURL { get; set; }
+        public string ImageUrl { get; set; }
         //object to hold the results from the FK table representing the values of that foreign key Id
         public Owner Owner { get; set; }
 
