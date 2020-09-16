@@ -7,24 +7,21 @@ using Microsoft.Extensions.Configuration;
 
 namespace DogGo.Controllers
 {
-    public class WalkersController : Controller
+    public class DogController : Controller
     {
-        private readonly IWalkerRepository _walkerRepo;
+        private readonly WalkerRepository _walkerRepo;
 
-        // ASP.NET will give us an instance of our Walker Repository. This is called "Dependency Injection"
         // The constructor accepts an IConfiguration object as a parameter. 
         //This class comes from the ASP.NET framework and is useful for retrieving things out of the appsettings.json file like connection strings.
-        public WalkersController(IWalkerRepository walkerRepository)
+        public DogController(IConfiguration config)
         {
-            _walkerRepo = walkerRepository;
+            _walkerRepo = new WalkerRepository(config);
         }
 
-        
         // GET: Walkers
         //ActionResult is MVC thing, it created the index for us
         //we declared we wanted to enstaniate list in this method that contains all walkers linked to the walkers table that is accessed through the walkers Repository
        //returns a view result and passed in walkers, need to create a walkers view, and Razor does it for us
-        //INDEX is the default path wen going to the view for this controller
         public ActionResult Index()
         {
 

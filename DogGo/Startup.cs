@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using DogGo.Repositories;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.HttpsPolicy;
@@ -19,11 +20,14 @@ namespace DogGo
         }
 
         public IConfiguration Configuration { get; }
-
+        
         // This method gets called by the runtime. Use this method to add services to the container.
         public void ConfigureServices(IServiceCollection services)
         {
-            services.AddControllersWithViews();
+            services.AddControllersWithViews().AddRazorRuntimeCompilation();
+            services.AddTransient<IWalkerRepository, WalkerRepository>();
+            services.AddTransient<IOwnerRepository, OwnerRepository>();
+
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
@@ -51,8 +55,14 @@ namespace DogGo
                 endpoints.MapControllerRoute(
                     name: "default",
                     pattern: "{controller=Home}/{action=Index}/{id?}");
-                //the pattern above defines your starting view point and how views for methods / values are expected to be passed along
+                //the pattern above defines your url patter and how views for methods / values are expected to be passed along
                 //or something like that
+                //controller = based on controller you want to view
+                // action = name of method in controller (controller action) index is the default method
+                //? = "maybe" an id when using a "?"
+                //localhost:5000/ ....no controller name will go to default controller , home, and use the default method / action, index
+                //localhost:5000/Walker ... takes you to to index view of walker controller (index is default)
+                // very common pattern to use, dont mess with it.
             });
         }
     }

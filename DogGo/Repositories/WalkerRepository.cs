@@ -8,7 +8,7 @@ using Microsoft.Extensions.Configuration;
 // used manage Nugget Packages from Project dropdown to search for and add that package instead of dotnet install from console.
 namespace DogGo.Repositories
 {
-    public class WalkerRepository
+    public class WalkerRepository : IWalkerRepository
     {
         //create private field to hold server address
         private readonly IConfiguration _config;
