@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Data;
 using DogGo.Models;
 using Microsoft.Data.SqlClient;
@@ -104,10 +105,16 @@ namespace DogGo.Repositories
                             Id = reader.GetInt32(reader.GetOrdinal("Id")),
                             Name = reader.GetString(reader.GetOrdinal("Name")),
                             Breed = reader.GetString(reader.GetOrdinal("Breed")),
-                            ImageUrl = reader.GetString(reader.GetOrdinal("ImageUrl")),
                             OwnerId = reader.GetInt32(reader.GetOrdinal("OwnerId"))
                         };
-
+                        if (!reader.IsDBNull(reader.GetOrdinal("Notes")))
+                        {
+                            dog.Notes = reader.GetString(reader.GetOrdinal("Notes"));
+                        };
+                        if (!reader.IsDBNull(reader.GetOrdinal("ImageUrl")))
+                        {
+                            dog.ImageUrl = reader.GetString(reader.GetOrdinal("ImageUrl"));
+                        };
 
                         reader.Close();
                         return dog;
@@ -119,7 +126,7 @@ namespace DogGo.Repositories
             }
         }
 
-        public void AddDog(Dog dog)
+        public void AddDog(Dog newDog)
         {
             using (SqlConnection conn = Connection)
             {
@@ -129,18 +136,35 @@ namespace DogGo.Repositories
                     cmd.CommandText = @"
                     INSERT INTO Dog ([Name], Breed, Notes, ImageUrl, OwnerId)
                     OUTPUT INSERTED.ID
-                    VALUES (@name, @breed, @notes, @imageUrl, @ownerId;
+                    VALUES (@name, @breed, @notes, @imageUrl, @ownerId);
                 ";
+                 
+                    cmd.Parameters.AddWithValue("@name", newDog.Name);
+                    cmd.Parameters.AddWithValue("@breed", newDog.Breed);
+                    
+                    cmd.Parameters.AddWithValue("@ownerId", newDog.OwnerId);
+                    //add conditonal to capture empty input fields here? or in the view?
+                    if (newDog.Notes == null)
+                    {
+                        cmd.Parameters.AddWithValue("@Notes", DBNull.Value);
+                    }
+                    else
+                    {
+                        cmd.Parameters.AddWithValue("@Notes", newDog.Notes);
+                    }
 
-                    cmd.Parameters.AddWithValue("@name", dog.Name);
-                    cmd.Parameters.AddWithValue("@breed", dog.Breed);
-                    cmd.Parameters.AddWithValue("@notes", dog.Notes);
-                    cmd.Parameters.AddWithValue("@imageUrl", dog.ImageUrl);
-                    cmd.Parameters.AddWithValue("@ownerId", dog.OwnerId);
-
+                    // LOOK AT THIS
+                    if (newDog.ImageUrl == null)
+                    {
+                        cmd.Parameters.AddWithValue("@ImageUrl", DBNull.Value);
+                    }
+                    else
+                    {
+                        cmd.Parameters.AddWithValue("@ImageUrl", newDog.ImageUrl);
+                    }
                     int id = (int)cmd.ExecuteScalar();
 
-                    dog.Id = id;
+                    newDog.Id = id;
                 }
             }
         }
@@ -165,10 +189,27 @@ namespace DogGo.Repositories
 
                     cmd.Parameters.AddWithValue("@name", dog.Name);
                     cmd.Parameters.AddWithValue("@breed", dog.Breed);
-                    cmd.Parameters.AddWithValue("@notes", dog.Notes);
-                    cmd.Parameters.AddWithValue("@imageUrl", dog.ImageUrl);
                     cmd.Parameters.AddWithValue("@ownerId", dog.OwnerId);
                     cmd.Parameters.AddWithValue("@id", dog.Id);
+                    if (dog.Notes == null)
+                    {
+                        cmd.Parameters.AddWithValue("@Notes", DBNull.Value);
+                    }
+                    else
+                    {
+                        cmd.Parameters.AddWithValue("@Notes", dog.Notes);
+                    }
+
+                    // LOOK AT THIS
+                    if (dog.ImageUrl == null)
+                    {
+                        cmd.Parameters.AddWithValue("@ImageUrl", DBNull.Value);
+                    }
+                    else
+                    {
+                        cmd.Parameters.AddWithValue("@ImageUrl", dog.ImageUrl);
+                    }
+
 
                     cmd.ExecuteNonQuery();
                 }

@@ -42,7 +42,7 @@ namespace DogGo.Controllers
                 return NotFound();
             }
 
-            return View();
+            return View(dog);
         }
 
         // GET: DogController/Create
@@ -64,7 +64,7 @@ namespace DogGo.Controllers
             }
             catch (Exception ex)
             {
-                return View();
+                return View(dog);
             }
         }
 
@@ -78,7 +78,7 @@ namespace DogGo.Controllers
                 return NotFound();
             }
 
-            return View();
+            return View(dog);
         }
 
         // POST: Owners/Edit/5
@@ -103,7 +103,7 @@ namespace DogGo.Controllers
         {
             Dog dog = _dogRepo.GetDogById(id);
 
-            return View();
+            return View(dog);
         }
 
         // POST: Dogs/Delete/5

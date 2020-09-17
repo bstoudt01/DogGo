@@ -29,6 +29,7 @@ namespace DogGo.Controllers
         }
 
         // GET: Owners/Details/5
+        // int id is pulled in from URL pathway 
         public ActionResult Details(int id)
         {
             Owner owner = _ownerRepo.GetOwnerById(id);
