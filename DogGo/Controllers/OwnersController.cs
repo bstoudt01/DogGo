@@ -93,16 +93,28 @@ namespace DogGo.Controllers
         }
 
         // GET: Owners/Edit/5
+        //GET LIST of All neighborhoods
         public ActionResult Edit(int id)
         {
+            //set those equal to a new instance of the object or list
             Owner owner = _ownerRepo.GetOwnerById(id);
+            List<Neighborhood> neighborhoods = _neighborhoodRepo.GetAll();
 
+            OwnerFormViewModel vm = new OwnerFormViewModel()
+            {
+                //reference to set variable in Edit.cshtml
+                //Owner is accessable as is. but Neighborhoods seems to require Model.Neighboorhoods .... you can also use Model.Owner but thats more typing..
+                Owner = owner,
+                Neighborhoods = neighborhoods
+            };
+            
+           //original conditional if getownerbyid returns null,
             if (owner == null)
             {
                 return NotFound();
             }
 
-            return View(owner);
+            return View(vm);
         }
 
         // POST: Owners/Edit/5
