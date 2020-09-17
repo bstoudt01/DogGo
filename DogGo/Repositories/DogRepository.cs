@@ -31,6 +31,7 @@ namespace DogGo.Repositories
             }
         }
 
+        //GET LIST ALL Dogs
         //creates a list to hold all the dogs as it expects recieve back many walkers from the database (SQL)
         public List<Dog> GetAllDogs()
         {
@@ -87,6 +88,7 @@ namespace DogGo.Repositories
             }
         }
 
+        //GET SINGLE Dog by Id
         public Dog GetDogById(int id)
         {
             using (SqlConnection conn = Connection)
@@ -132,6 +134,7 @@ namespace DogGo.Repositories
             }
         }
 
+        //CREATE DOG
         public void AddDog(Dog newDog)
         {
             using (SqlConnection conn = Connection)
@@ -177,6 +180,7 @@ namespace DogGo.Repositories
             }
         }
 
+        //EDIT Dog
         public void UpdateDog(Dog dog)
         {
             using (SqlConnection conn = Connection)
@@ -224,6 +228,7 @@ namespace DogGo.Repositories
             }
         }
 
+        //DELETE Dog
         public void DeleteDog(int dogId)
         {
             using (SqlConnection conn = Connection)
@@ -240,6 +245,55 @@ namespace DogGo.Repositories
                     cmd.Parameters.AddWithValue("@id", dogId);
 
                     cmd.ExecuteNonQuery();
+                }
+            }
+        }
+
+        //GET LIST of Dogs by Owner.Id
+        public List<Dog> GetDogsByOwnerId(int ownerId)
+        {
+            using (SqlConnection conn = Connection)
+            {
+                conn.Open();
+
+                using (SqlCommand cmd = conn.CreateCommand())
+                {
+                    cmd.CommandText = @"
+                SELECT Id, Name, Breed, Notes, ImageUrl, OwnerId 
+                FROM Dog
+                WHERE OwnerId = @ownerId
+            ";
+
+                    cmd.Parameters.AddWithValue("@ownerId", ownerId);
+
+                    SqlDataReader reader = cmd.ExecuteReader();
+
+                    List<Dog> dogs = new List<Dog>();
+
+                    while (reader.Read())
+                    {
+                        Dog dog = new Dog()
+                        {
+                            Id = reader.GetInt32(reader.GetOrdinal("Id")),
+                            Name = reader.GetString(reader.GetOrdinal("Name")),
+                            Breed = reader.GetString(reader.GetOrdinal("Breed")),
+                            OwnerId = reader.GetInt32(reader.GetOrdinal("OwnerId"))
+                        };
+
+                        // Check if optional columns are null
+                        if (reader.IsDBNull(reader.GetOrdinal("Notes")) == false)
+                        {
+                            dog.Notes = reader.GetString(reader.GetOrdinal("Notes"));
+                        }
+                        if (reader.IsDBNull(reader.GetOrdinal("ImageUrl")) == false)
+                        {
+                            dog.ImageUrl = reader.GetString(reader.GetOrdinal("Notes"));
+                        }
+
+                        dogs.Add(dog);
+                    }
+                    reader.Close();
+                    return dogs;
                 }
             }
         }

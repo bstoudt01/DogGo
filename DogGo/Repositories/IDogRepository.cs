@@ -11,6 +11,8 @@ namespace DogGo.Repositories
         void AddDog(Dog dog);
         void UpdateDog(Dog dog);
         void DeleteDog(int dogId);
-
+        //Adding methods to Repository?
+        //Right click the new method and add it to the Interface quickly
+        List<Dog> GetDogsByOwnerId(int id);
     }
 }
