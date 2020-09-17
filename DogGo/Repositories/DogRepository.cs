@@ -31,7 +31,7 @@ namespace DogGo.Repositories
             }
         }
 
-        //creates a list to hold all the walkers as it expects recieve back many walkers from the database (SQL)
+        //creates a list to hold all the dogs as it expects recieve back many walkers from the database (SQL)
         public List<Dog> GetAllDogs()
         {
             //implement "using statement" to create a SQLconnection variable
@@ -63,14 +63,20 @@ namespace DogGo.Repositories
                             Breed = reader.GetString(reader.GetOrdinal("Breed")),
                             OwnerId = reader.GetInt32(reader.GetOrdinal("OwnerId"))
                         };
-                         if (!reader.IsDBNull(reader.GetOrdinal("Notes")))
+                        //conditionals to handle null values that are allowed to be stored in the DB based on Database rules for those rows
+                        //.IsDBNull returns T/F 
+                        //if the value of the column for this row returns NOT null (== false), then do the code and set the property... else do no thing and move on..
+                        if (reader.IsDBNull(reader.GetOrdinal("Notes")) == false)
                         {
                             dog.Notes = reader.GetString(reader.GetOrdinal("Notes"));
-                        };
+                        }
+                        //same thing but with ! for T/F declaration
                         if (!reader.IsDBNull(reader.GetOrdinal("ImageUrl")))
                         {
                             dog.ImageUrl = reader.GetString(reader.GetOrdinal("ImageUrl"));
                         };
+
+                        //add this dog to the list dogs
                         dogs.Add(dog);
                     }
                     //READERS MUST ALWAYS BE CLOSED
@@ -143,7 +149,9 @@ namespace DogGo.Repositories
                     cmd.Parameters.AddWithValue("@breed", newDog.Breed);
                     
                     cmd.Parameters.AddWithValue("@ownerId", newDog.OwnerId);
-                    //add conditonal to capture empty input fields here? or in the view?
+                    //DBNull.Value declares the null type (a non existant value) that our code can translate to SQL and handle
+                    //conditional to capture if the value of the input box was null
+                    //if Notes is null then assign the value the database understands as null
                     if (newDog.Notes == null)
                     {
                         cmd.Parameters.AddWithValue("@Notes", DBNull.Value);
