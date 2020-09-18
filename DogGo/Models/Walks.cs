@@ -5,6 +5,9 @@ using System.Threading.Tasks;
 
 namespace DogGo.Models
 {
+    //MODEL representing a Join Table of Dogs and the people that walk them, Walkers. + supporting info for the walk
+    // created a walks repository to handle the queries we need for our viewmodels
+    //created an instance of this class in WalkersController for Details View of the WalkProfileViewModel properties / methods.
     public class Walks
     {
 

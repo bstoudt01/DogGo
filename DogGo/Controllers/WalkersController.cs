@@ -49,12 +49,15 @@ namespace DogGo.Controllers
         }
 
         // GET: Walkers/Details/5
+        //including walks join table methods from WalksRespository
+        //Walker to Profile
+        //List of Walks by that walker Id
+        //Total of minutes walked by that walker passed through timespan method and minutes / hours were added to a string
          public ActionResult Details(int id)
         {
             Walker walker = _walkerRepo.GetWalkerById(id);
             List<Walks> walks = _walksRepo.GetWalksByWalkerId(id);
             string totalWalked = _walksRepo.GetTotalWalkedByWalkerId(id);
-//            Owner owner = _walksRepo.GetOwnerByDogId(id);
 
 
             WalkerProfileViewModel vm = new WalkerProfileViewModel()
@@ -62,7 +65,6 @@ namespace DogGo.Controllers
                 GetWalksByWalkerId = walks,
                 Walker = walker,
                 GetTotalWalkedByWalkerId = totalWalked
-                //              Owner = owner
 
             };
 
