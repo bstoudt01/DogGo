@@ -72,7 +72,6 @@ namespace DogGo.Repositories
                             WalkerId = reader.GetInt32(reader.GetOrdinal("WalkerId")),
                             DogId = reader.GetInt32(reader.GetOrdinal("DogId")),
 
-
                             Dog = new Dog()
                                 {
                                     Id = reader.GetInt32(reader.GetOrdinal("SingleDogId")),
