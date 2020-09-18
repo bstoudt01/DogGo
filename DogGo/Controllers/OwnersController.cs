@@ -100,6 +100,7 @@ namespace DogGo.Controllers
             Owner owner = _ownerRepo.GetOwnerById(id);
             List<Neighborhood> neighborhoods = _neighborhoodRepo.GetAll();
 
+            //this view model was implemented for create method but we require same info here so we can reuse it    
             OwnerFormViewModel vm = new OwnerFormViewModel()
             {
                 //reference to set variable in Edit.cshtml
