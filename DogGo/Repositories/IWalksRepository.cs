@@ -13,5 +13,7 @@ namespace DogGo.Repositories
         void UpdateWalk(Walks walk);
         Owner GetOwnerByDogId(int id);
 
+        public string GetTotalWalkedByWalkerId(int walkerId);
+
     }
 }

@@ -9,7 +9,7 @@ namespace DogGo.Models.ViewModels
         //LIST of Walks Taken  by single walker that will include Owner.Name from the join on Dog.OwnerId
         public List<Walks> GetWalksByWalkerId { get; set; }
         public List<Walker> Walkers { get; set; }
-
+        public string GetTotalWalkedByWalkerId { get; set; }
 
         //Single Walker to Profile
         public Walker Walker { get; set; }

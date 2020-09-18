@@ -53,6 +53,7 @@ namespace DogGo.Controllers
         {
             Walker walker = _walkerRepo.GetWalkerById(id);
             List<Walks> walks = _walksRepo.GetWalksByWalkerId(id);
+            string totalWalked = _walksRepo.GetTotalWalkedByWalkerId(id);
 //            Owner owner = _walksRepo.GetOwnerByDogId(id);
 
 
@@ -60,8 +61,9 @@ namespace DogGo.Controllers
             {
                 GetWalksByWalkerId = walks,
                 Walker = walker,
-  //              Owner = owner
-                
+                GetTotalWalkedByWalkerId = totalWalked
+                //              Owner = owner
+
             };
 
             return View(vm);
