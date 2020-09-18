@@ -10,7 +10,6 @@ using Microsoft.Extensions.Configuration;
 // used manage Nugget Packages from Project dropdown to search for and add that package instead of dotnet install from console.
 namespace DogGo.Repositories
 {
-    //CREATE and INHERIT IWALKSREPOSITORY??
     public class WalksRepository : IWalksRepository
     {
         //create private field to hold server address
@@ -46,9 +45,15 @@ namespace DogGo.Repositories
                 {
                     //command sent to sql server (sql query as @"string")
                     cmd.CommandText = @"
-                    SELECT Id, Date, Duration, WalkerId, DogId
-                    FROM Walks
-                    WHERE WalkerId = @walkerId
+                        SELECT 
+                            w.Id, w.Date, w.Duration, w.WalkerId, w.DogId,
+                            o.Id, o.Name, o.Email, o.Address, o.Phone, o.NeighborhoodId, 
+                            d.Name AS DogName, d.Id AS SingleDogId, d.OwnerId, d.Breed, d.Notes, d.ImageUrl
+                        FROM Walks w
+                            JOIN Walker dw ON w.WalkerId = dw.Id
+                            JOIN Dog d ON w.DogId = d.Id          
+                            JOIN [Owner] o ON d.OwnerId = o.Id
+                        WHERE w.WalkerId = @walkerId
                     ";
                     //built in method to create reader that can interpret sql response
                     cmd.Parameters.AddWithValue("@walkerId", walkerId);
@@ -56,6 +61,7 @@ namespace DogGo.Repositories
                     SqlDataReader reader = cmd.ExecuteReader();
                     //creates a new list of dogs to hold data read by the sqldatareader
                     List<Walks> walksTaken = new List<Walks>();
+                  
                     while (reader.Read())
                     {
                         Walks walk = new Walks
@@ -64,12 +70,27 @@ namespace DogGo.Repositories
                             Date = reader.GetDateTime(reader.GetOrdinal("Date")),
                             Duration = reader.GetInt32(reader.GetOrdinal("Duration")),
                             WalkerId = reader.GetInt32(reader.GetOrdinal("WalkerId")),
-                            DogId = reader.GetInt32(reader.GetOrdinal("DogId"))
+                            DogId = reader.GetInt32(reader.GetOrdinal("DogId")),
 
+
+                            Dog = new Dog()
+                                {
+                                    Id = reader.GetInt32(reader.GetOrdinal("SingleDogId")),
+                                    Name = reader.GetString(reader.GetOrdinal("DogName")),
+                                    Breed = reader.GetString(reader.GetOrdinal("Breed")),
+                                    OwnerId = reader.GetInt32(reader.GetOrdinal("OwnerId")),
+                                    Owner = new Owner()
+                                    {
+                                        Id = reader.GetInt32(reader.GetOrdinal("Id")),
+                                        Name = reader.GetString(reader.GetOrdinal("Name")),
+                                        NeighborhoodId = reader.GetInt32(reader.GetOrdinal("NeighborhoodId"))
+                                    }
+                                },
                         };
 
                         //add this dog to the list dogs
                         walksTaken.Add(walk);
+                        
                     }
                     //READERS MUST ALWAYS BE CLOSED
                     reader.Close();
@@ -118,6 +139,7 @@ namespace DogGo.Repositories
                 }
             }
         }
+        
 
         //CREATE DOG
         public void AddWalk(Walks newWalk)
@@ -235,6 +257,49 @@ namespace DogGo.Repositories
                     reader.Close();
                     //return the list as our List representing Walkers.GetAllWalkers()
                     return walksTaken;
+                }
+            }
+        }
+
+
+        public Owner GetOwnerByDogId(int id)
+        {
+            using (SqlConnection conn = Connection)
+            {
+                conn.Open();
+
+                using (SqlCommand cmd = conn.CreateCommand())
+                {
+                    cmd.CommandText = @"
+                         SELECT o.Id, o.Name, o.Email, o.Address, o.Phone, o.NeighborhoodId
+                         FROM Walks w
+                            JOIN Walker dw ON w.WalkerId = dw.Id
+                            JOIN Dog d ON w.DogId = d.Id          
+                            JOIN [Owner] o ON d.OwnerId = o.Id
+                        WHERE w.WalkerId = @id";
+    
+                    cmd.Parameters.AddWithValue("@id", id);
+
+                    SqlDataReader reader = cmd.ExecuteReader();
+
+                    if (reader.Read())
+                    {
+                        Owner owner = new Owner()
+                        {
+                            Id = reader.GetInt32(reader.GetOrdinal("Id")),
+                            Name = reader.GetString(reader.GetOrdinal("Name")),
+                            Email = reader.GetString(reader.GetOrdinal("Email")),
+                            Address = reader.GetString(reader.GetOrdinal("Address")),
+                            Phone = reader.GetString(reader.GetOrdinal("Phone")),
+                            NeighborhoodId = reader.GetInt32(reader.GetOrdinal("NeighborhoodId"))
+                        };
+
+                        reader.Close();
+                        return owner;
+                    }
+
+                    reader.Close();
+                    return null;
                 }
             }
         }
