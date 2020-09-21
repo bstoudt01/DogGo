@@ -34,46 +34,49 @@
 
     <div class="row">
         <section class="col-8 container mt-5">
+
             <h1 class="text-left">Walks</h1>
 
             <div class="row">
+                    <div class="card m-4" style="width: 40rem;">
                 @foreach (Walks walk in Model.GetWalksByWalkerId)
                 {
-                    <div class="card m-4" style="width: 18rem;">
-
+                    DateTime time = walk.Date;
+                    string format = "MMM d yyyy";
                         <div class="card-body">
-                            <div>
+                            <span>
                                 <label class="font-weight-bold">Date:</label>
-                                <span>@walk.Date</span>
-                            </div>
-                            <div>
-                                <label class="font-weight-bold">Name:</label>
-                                <span>@walk.Dog.Name</span>
-                            </div>
-                            <div>
+                                <span>@time.ToString(format)</span>
+                            </span>
+                            <span>
                                 <label class="font-weight-bold">Dog:</label>
+                                <span>@walk.Dog.Name</span>
+                            </span>
+                            <span>
+                                <label class="font-weight-bold">Client:</label>
                                 <span>@walk.Dog.Owner.Name</span>
-                            </div>
-                            <div>
-                                <label class="font-weight-bold">Length:</label>
-                                <p>@(walk.Duration/60) min</p>
-                            </div>
+                            </span>
+                            <span>
+                                <label class="font-weight-bold">Duration:</label>
+                                <span>@(walk.Duration/60) min</span>
+                            </span>
 
                         </div>
+                }
                     </div>
 
-                }
             </div>
         </section>
-        <section class="col-lg-4 col-md-8 container mt-5">
-            <div>
-                <h1>Total Walk Time:</h1>
+
+            <section class="col-lg-4 col-md-8 container mt-5">
+                <div>
+                    <h1>Total Walk Time:</h1>
 
 
-                <span>@Model.GetTotalWalkedByWalkerId</span>
-            </div>
+                    <span>@Model.GetTotalWalkedByWalkerId</span>
+                </div>
 
-        </section>
+            </section>
 
-    </div>
+</div>
 </div>

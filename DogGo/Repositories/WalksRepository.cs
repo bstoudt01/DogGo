@@ -99,6 +99,44 @@ namespace DogGo.Repositories
                 }
             }
         }
+        //GET Total Time Walked
+        public string GetTotalWalkedByWalkerId(int walkerId)
+        {
+            using (SqlConnection conn = Connection)
+            {
+                conn.Open();
+
+                using (SqlCommand cmd = conn.CreateCommand())
+                {
+                    cmd.CommandText = @"
+                        SELECT SUM(Duration)/60 AS TotalTimeWalked 
+                        FROM Walks
+                        WHERE Walks.WalkerId = @id";
+
+                    cmd.Parameters.AddWithValue("@id", walkerId);
+
+                    SqlDataReader reader = cmd.ExecuteReader();
+
+                    if (reader.Read())
+                    {
+                        if (!reader.IsDBNull(reader.GetOrdinal("TotalTimeWalked")))
+                        {
+                            int totalTimeWalked = reader.GetInt32(reader.GetOrdinal("TotalTimeWalked"));
+
+                            TimeSpan span = new TimeSpan(0, 0, totalTimeWalked, 0, 0);
+                            int hoursWalked = span.Hours;
+                            int minutesWalked = span.Minutes;
+                            string totalTimeWalkedSTR = (hoursWalked + "hr " + minutesWalked + "Min");
+                            reader.Close();
+                            return totalTimeWalkedSTR;
+                        };
+                    }
+
+                    reader.Close();
+                    return null;
+                }
+            }
+        }
 
         //GET SINGLE Walk by Id
         public Walks GetWalkById(int id)
@@ -304,43 +342,6 @@ namespace DogGo.Repositories
             }
         }
 
-        //GET Total Time Walked
-        public string GetTotalWalkedByWalkerId(int walkerId)
-        {
-            using (SqlConnection conn = Connection)
-            {
-                conn.Open();
 
-                using (SqlCommand cmd = conn.CreateCommand())
-                {
-                    cmd.CommandText = @"
-                        SELECT SUM(Duration)/60 AS TotalTimeWalked 
-                        FROM Walks
-                        WHERE Walks.WalkerId = @id";
-
-                    cmd.Parameters.AddWithValue("@id", walkerId);
-
-                    SqlDataReader reader = cmd.ExecuteReader();
-
-                    if (reader.Read())
-                    {
-                        if (!reader.IsDBNull(reader.GetOrdinal("TotalTimeWalked")))
-                        {
-                        int totalTimeWalked = reader.GetInt32(reader.GetOrdinal("TotalTimeWalked"));
-
-                        TimeSpan span = new TimeSpan(0, 0,totalTimeWalked, 0, 0);
-                        int hoursWalked = span.Hours;
-                        int minutesWalked = span.Minutes;
-                        string totalTimeWalkedSTR = (hoursWalked + "hr " +minutesWalked+"Min");
-                        reader.Close();
-                        return totalTimeWalkedSTR;
-                        };
-                    }
-
-                    reader.Close();
-                    return null;
-                }
-            }
-        }
     }
 }

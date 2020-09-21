@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Security.Claims;
 using DogGo.Models;
 using DogGo.Repositories;
 using Microsoft.AspNetCore.Http;
@@ -19,14 +20,21 @@ namespace DogGo.Controllers
             _dogRepo = dogRepository;
         }
 
+        //GET USER ID from Cookie using find first value and looking for a claim type with the Name Identifier property
+        private int GetCurrentUserId()
+        {
+            string id = User.FindFirstValue(ClaimTypes.NameIdentifier);
+            return int.Parse(id);
+        }
+
         // GET: Dogs
         //ActionResult is MVC thing, it created the index for us
         //we declared we wanted to enstaniate list in this method that contains all walkers linked to the walkers table that is accessed through the walkers Repository
-       //returns a view result and passed in walkers, need to create a walkers view, and Razor does it for us
+        //returns a view result and passed in walkers, need to create a walkers view, and Razor does it for us
         public ActionResult Index()
         {
-
-            List<Dog> dogs = _dogRepo.GetAllDogs();
+            int ownerId = GetCurrentUserId();
+            List<Dog> dogs = _dogRepo.GetDogsByOwnerId(ownerId);
 
             return View(dogs);
         }
@@ -122,5 +130,6 @@ namespace DogGo.Controllers
                 return View(dog);
             }
         }
+
     }
 }
