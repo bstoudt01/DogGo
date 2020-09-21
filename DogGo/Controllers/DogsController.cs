@@ -66,6 +66,10 @@ namespace DogGo.Controllers
         {
             try
             {
+                // update the dogs OwnerId to the current user's Id AFTER THE DOG WAS CREATION WAS STARTED ON THE FORM
+                dog.OwnerId = GetCurrentUserId();
+
+                //add dog to database (including OwnerId assigned above)
                 _dogRepo.AddDog(dog);
 
                 return RedirectToAction("Index");

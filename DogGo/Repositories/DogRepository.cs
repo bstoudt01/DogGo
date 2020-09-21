@@ -152,19 +152,16 @@ namespace DogGo.Repositories
                     cmd.Parameters.AddWithValue("@breed", newDog.Breed);
                     
                     cmd.Parameters.AddWithValue("@ownerId", newDog.OwnerId);
+
+                    // LOOK AT THIS
+                    //DOES THE SAME THING AS THE IF STATEMENT BELOW?
+                    cmd.Parameters.AddWithValue("@notes", newDog.Notes ?? "");
+
+
                     //DBNull.Value declares the null type (a non existant value) that our code can translate to SQL and handle
                     //conditional to capture if the value of the input box was null
                     //if Notes is null then assign the value the database understands as null
-                    if (newDog.Notes == null)
-                    {
-                        cmd.Parameters.AddWithValue("@Notes", DBNull.Value);
-                    }
-                    else
-                    {
-                        cmd.Parameters.AddWithValue("@Notes", newDog.Notes);
-                    }
-
-                    // LOOK AT THIS
+                    
                     if (newDog.ImageUrl == null)
                     {
                         cmd.Parameters.AddWithValue("@ImageUrl", DBNull.Value);
