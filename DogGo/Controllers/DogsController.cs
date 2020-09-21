@@ -25,9 +25,9 @@ namespace DogGo.Controllers
         private int GetCurrentUserId()
         {
             string id = User.FindFirstValue(ClaimTypes.NameIdentifier);
-           
+
             return int.Parse(id);
-            
+
         }
 
         // GET: Dogs
@@ -38,9 +38,18 @@ namespace DogGo.Controllers
         public ActionResult Index()
         {
             int ownerId = GetCurrentUserId();
+            if (ownerId == 0 )
+            {
+                List<Dog> allDogs = _dogRepo.GetAllDogs();
+            return View(allDogs);
+            }
+            else
+            {
             List<Dog> dogs = _dogRepo.GetDogsByOwnerId(ownerId);
+                return View(dogs);
 
-            return View(dogs);
+            }
+
         }
 
 
