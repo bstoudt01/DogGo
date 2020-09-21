@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Security.Claims;
 using DogGo.Models;
 using DogGo.Repositories;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Configuration;
@@ -24,13 +25,16 @@ namespace DogGo.Controllers
         private int GetCurrentUserId()
         {
             string id = User.FindFirstValue(ClaimTypes.NameIdentifier);
+           
             return int.Parse(id);
+            
         }
 
         // GET: Dogs
         //ActionResult is MVC thing, it created the index for us
         //we declared we wanted to enstaniate list in this method that contains all walkers linked to the walkers table that is accessed through the walkers Repository
         //returns a view result and passed in walkers, need to create a walkers view, and Razor does it for us
+        [Authorize]
         public ActionResult Index()
         {
             int ownerId = GetCurrentUserId();
@@ -41,6 +45,7 @@ namespace DogGo.Controllers
 
 
         // GET: Dog/Details/5
+        [Authorize]
         public ActionResult Details(int id)
         {
             Dog dog = _dogRepo.GetDogById(id);
@@ -54,12 +59,14 @@ namespace DogGo.Controllers
         }
 
         // GET: DogController/Create
+        [Authorize]
         public ActionResult Create()
         {
             return View();
         }
 
         // POST: DogController/Create
+        [Authorize]
         [HttpPost]
         [ValidateAntiForgeryToken]
         public ActionResult Create(Dog dog)
@@ -81,6 +88,7 @@ namespace DogGo.Controllers
         }
 
         // GET: Dog/Edit/5
+        [Authorize]
         public ActionResult Edit(int id)
         {
             Dog dog = _dogRepo.GetDogById(id);
@@ -94,6 +102,7 @@ namespace DogGo.Controllers
         }
 
         // POST: Owners/Edit/5
+        [Authorize]
         [HttpPost]
         [ValidateAntiForgeryToken]
         public ActionResult Edit(int id, Dog dog)
@@ -111,6 +120,7 @@ namespace DogGo.Controllers
         }
 
         // GET: Dogs/Delete/5
+        [Authorize]
         public ActionResult Delete(int id)
         {
             Dog dog = _dogRepo.GetDogById(id);
@@ -119,6 +129,7 @@ namespace DogGo.Controllers
         }
 
         // POST: Dogs/Delete/5
+        [Authorize]
         [HttpPost]
         [ValidateAntiForgeryToken]
         public ActionResult Delete(int id, Dog dog)
