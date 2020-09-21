@@ -91,9 +91,10 @@ namespace DogGo.Controllers
         [Authorize]
         public ActionResult Edit(int id)
         {
+            int ownerId = GetCurrentUserId();
             Dog dog = _dogRepo.GetDogById(id);
 
-            if (dog == null)
+            if (dog == null || dog.OwnerId != ownerId )
             {
                 return NotFound();
             }
@@ -102,16 +103,27 @@ namespace DogGo.Controllers
         }
 
         // POST: Owners/Edit/5
+        //edit is returning Dog dog as a paramater to updateDog when you hit submit, 
+        //delete is only returnign the id to deleteDog.
         [Authorize]
         [HttpPost]
         [ValidateAntiForgeryToken]
         public ActionResult Edit(int id, Dog dog)
         {
+            int ownerId = GetCurrentUserId();
+
             try
             {
-                _dogRepo.UpdateDog(dog);
+                if (dog == null || dog.OwnerId != ownerId)
+                {
+                    return NotFound();
+                }
+                else
+                {
+                    _dogRepo.UpdateDog(dog);
 
-                return RedirectToAction("Index");
+                    return RedirectToAction("Index");
+                }
             }
             catch (Exception ex)
             {
@@ -123,22 +135,40 @@ namespace DogGo.Controllers
         [Authorize]
         public ActionResult Delete(int id)
         {
+            int ownerId = GetCurrentUserId();
             Dog dog = _dogRepo.GetDogById(id);
+            if (dog == null || dog.OwnerId != ownerId)
+            {
+                return NotFound();
+            }
 
             return View(dog);
         }
 
         // POST: Dogs/Delete/5
+        //Needed to compare dog.ownerId to cookies but GET Request for delete was only returing Id????
+        //brought in getDogId since we are only sending the id to the delete function 
+
         [Authorize]
         [HttpPost]
         [ValidateAntiForgeryToken]
         public ActionResult Delete(int id, Dog dog)
         {
+            int ownerId = GetCurrentUserId();
+            Dog deleteDog = _dogRepo.GetDogById(id);
+
             try
             {
-                _dogRepo.DeleteDog(id);
+                if (deleteDog.OwnerId != ownerId)
+                {
+                    return NotFound();
+                }
+                else
+                {
+                    _dogRepo.DeleteDog(id);
 
-                return RedirectToAction("Index");
+                    return RedirectToAction("Index");
+                }
             }
             catch (Exception ex)
             {

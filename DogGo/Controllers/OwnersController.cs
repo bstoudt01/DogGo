@@ -36,11 +36,15 @@ namespace DogGo.Controllers
             _neighborhoodRepo = neighborhoodRepository;
         }
 
+        //GET: Login
         public ActionResult Login()
         {
             return View();
         }
 
+        //POST: Login
+        //Ask for Email, if true / null = not in db return unathorized
+        //if false / exists in database then create a claim and store in cookies THEN redirect to dogs/index
         [HttpPost]
         public async Task<ActionResult> Login(LoginViewModel viewModel)
         {
