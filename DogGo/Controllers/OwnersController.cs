@@ -85,7 +85,7 @@ namespace DogGo.Controllers
         public ActionResult Details(int id)
         {
             Owner owner = _ownerRepo.GetOwnerById(id);
-            List<Dog> dogs = _dogRepo.GetDogsByOwnerId(owner.Id);
+            List<Dog> dogs = _dogRepo.GetDogsByOwnerId(id);
             List<Walker> walkers = _walkerRepo.GetWalkersInNeighborhood(owner.NeighborhoodId);
 
             ProfileViewModel vm = new ProfileViewModel()
@@ -196,6 +196,13 @@ namespace DogGo.Controllers
             {
                 return View(owner);
             }
+        }
+
+        //Logout method used on navbar
+        public async Task<IActionResult> Logout()
+        {
+            await HttpContext.SignOutAsync();
+            return RedirectToAction("Index", "Home");
         }
     }
 }

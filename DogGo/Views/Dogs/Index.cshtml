@@ -4,22 +4,16 @@
     ViewData["Title"] = "Index";
 }
 
-<h1>Dog Index</h1>
+<h1>Dogs</h1>
 
 <p>
-    <a asp-action="Create">Create New</a>
+    <a asp-action="Create">Add New Dog</a>
 </p>
 <table class="table">
     <thead>
         <tr>
             <th>
-                @Html.DisplayNameFor(model => model.Id)
-            </th>
-            <th>
                 @Html.DisplayNameFor(model => model.Name)
-            </th>
-            <th>
-                @Html.DisplayNameFor(model => model.OwnerId)
             </th>
             <th>
                 @Html.DisplayNameFor(model => model.Breed)
@@ -37,13 +31,7 @@
 @foreach (var item in Model) {
         <tr>
             <td>
-                @Html.DisplayFor(modelItem => item.Id)
-            </td>
-            <td>
                 @Html.DisplayFor(modelItem => item.Name)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.OwnerId)
             </td>
             <td>
                 @Html.DisplayFor(modelItem => item.Breed)
@@ -52,7 +40,16 @@
                 @Html.DisplayFor(modelItem => item.Notes)
             </td>
             <td>
-                @Html.DisplayFor(modelItem => item.ImageUrl)
+                @if (String.IsNullOrEmpty(item.ImageUrl))
+                {
+                    <image style="width:100px;float:left;margin-right:20px" src="https://cdn.pixabay.com/photo/2018/08/15/13/12/dog-3608037_960_720.jpg"
+                           class="card-img-top"
+                           alt="Doggo" />
+                }
+                else
+                {
+                    <image style="width:100px;float:left;margin-right:20px" src="@item.ImageUrl" class="card-img-top" alt="Walker on Doggo" />
+                }
             </td>
             <td>
                 @Html.ActionLink("Edit", "Edit", new { id=item.Id }) |
